@@ -33,15 +33,20 @@ public class WordTrie {
         //node.setNumberOfWords(node.getNumberOfWords()+1);
     }
 
-    public void addWord(TrieNode node, String word) {
-
-        if (getChild(node,word.charAt(0)) == null) insertChar(node,word.charAt(0));
-
+    public boolean addWord(TrieNode node, String word) {
+        boolean wordAlreadyInTrie = true;
+        Character c = word.charAt(0);
+        if (!node.getChildren().containsKey(c)) {
+            node.getChildren().put(c, new TrieNode());
+        }
+        TrieNode next = node.getChildren().get(c);
         if (word.length() == 1) {
-            getChild(node,word.charAt(0)).setIsWord(true);
-            return;
-        } else {
-            addWord(getChild(node,word.charAt(0)), word.substring(1));
+            if (!next.isWord()) wordAlreadyInTrie = false;
+            next.setIsWord(true);
+            return wordAlreadyInTrie;
+        }
+        else {
+            return addWord(next, word.substring(1));
         }
     }
 
@@ -79,8 +84,11 @@ public class WordTrie {
 
         WordTrie example = new WordTrie();
         String inString = new Scanner(new File(args[0])).useDelimiter("\\Z").next();
-        String[] inArr = inString.split("\\p{Blank}");
-        for (String s : inArr) example.add(s);
+        String[] inArr = inString.split("\\p{Blank}+");
+        for (String s : inArr) {
+            if (!example.addWord(example.root, s))
+                        example.getChild(example.root,s.charAt(0)).incrNumberOfWords();
+        }
 
         Set<Character> letters = example.root.getChildren().keySet();
 

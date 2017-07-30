@@ -15,6 +15,10 @@ public class TrieNode {
         this.numberOfWords = numberOfWords;
     }
 
+    public void incrNumberOfWords() {
+        this.numberOfWords++;
+    }
+
     public void setChildren(TreeMap<Character, TrieNode> children) {
         this.children = children;
     }
